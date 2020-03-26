@@ -5,3 +5,6 @@
 /inspectionProfiles/profiles_settings.xml
 /recipe_app_api.iml
 /vcs.xml
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
