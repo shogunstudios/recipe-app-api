@@ -1,2 +1,7 @@
 # Default ignored files
 /workspace.xml
+/misc.xml
+/modules.xml
+/inspectionProfiles/profiles_settings.xml
+/recipe_app_api.iml
+/vcs.xml
