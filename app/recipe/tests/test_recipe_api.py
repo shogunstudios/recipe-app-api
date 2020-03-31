@@ -240,3 +240,50 @@ class RecipeImageUploadTests(TestCase):
         res = self.client.post(url, {'image': 'notimage'}, format='multipart')
 
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_filter_recipes_by_tag(self):
+        """Test returning recipes with specific tags"""
+        recipe1 = sample_recipe(user=self.user, title='Beef Stroganoff')
+        recipe2 = sample_recipe(user=self.user, title='Veroniki')
+        tag1 = sample_tag(user=self.user, name='Salty')
+        tag2 = sample_tag(user=self.user, name='Sweet')
+        recipe1.tags.add(tag1)
+        recipe2.tags.add(tag2)
+        recipe3 = sample_recipe(user=self.user, title='Penne a la Vodka')
+
+        res = self.client.get(
+            RECIPES_URL,
+            {'tags': f'{tag1.id}, {tag2.id}'}
+        )
+
+        serializer1 = RecipeSerializer(recipe1)
+        serializer2 = RecipeSerializer(recipe2)
+        serializer3 = RecipeSerializer(recipe3)
+
+        self.assertIn(serializer1.data, res.data)
+        self.assertIn(serializer2.data, res.data)
+        self.assertNotIn(serializer3.data, res.data)
+
+    def test_filter_recipes_by_ingredients(self):
+        """Test returning recipes with specific ingredients"""
+        recipe1 = sample_recipe(user=self.user, title='Verdiles Carrot Cake')
+        recipe2 = sample_recipe(user=self.user, title='Chicken Cacciatore')
+        ing1 = sample_ingredient(user=self.user, name='Carrots')
+        ing2 = sample_ingredient(user=self.user, name='Chicken')
+
+        recipe1.ingredients.add(ing1)
+        recipe2.ingredients.add(ing2)
+        recipe3 = sample_recipe(user=self.user, title='Keylime Pie')
+
+        res = self.client.get(
+            RECIPES_URL,
+            {'ingredients': f'{ing1.id}, {ing2.id}'}
+        )
+
+        ser1 = RecipeSerializer(recipe1)
+        ser2 = RecipeSerializer(recipe2)
+        ser3 = RecipeSerializer(recipe3)
+
+        self.assertIn(ser1.data, res.data)
+        self.assertIn(ser2.data, res.data)
+        self.assertNotIn(ser3.data, res.data)
